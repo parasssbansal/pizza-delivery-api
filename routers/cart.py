@@ -11,9 +11,9 @@ router=APIRouter(prefix="/cart", tags=["Cart"])
 def add_to_cart(
     cart: CartCreate,
     db: Session = Depends(get_db),
-    user_id: int = Depends(get_current_user)
+    current_user: int = Depends(get_current_user)
 ):
-
+    user_id=current_user.id
     if cart.quantity <= 0:
         raise HTTPException(status_code=400, detail="Quantity must be greater than zero")
 
@@ -44,8 +44,9 @@ def add_to_cart(
 @router.get("/view",response_model=list[CartResponse])
 def view_cart(
     db: Session = Depends(get_db),
-    user_id: int = Depends(get_current_user)
+    current_user: int = Depends(get_current_user)
 ):
+    user_id=current_user.id
     carts = db.query(Cart).filter(Cart.user_id == user_id).all()
     return carts
 
@@ -71,7 +72,7 @@ def delete_cart_item(pizza_id:int,
                      db:Session=Depends(get_db),
                      user_id:int=Depends(get_current_user)
                      ):
-    db_cart=db.query(Cart).filter(Cart.pizza_id==pizza_id,Cart.user_id==user_id).first()
+    db_cart=db.query(Cart).filter(Cart.pizza_id==pizza_id,Cart.user_id==user_id.id).first()
     if not db_cart:
         raise HTTPException(status_code=404,detail="Item not Found..")
     db.delete(db_cart)
@@ -83,6 +84,6 @@ def delete_cart(user_id:int=Depends(get_current_user),
                 db:Session=Depends(get_db)
                 ):
     
-    cart_db=db.query(Cart).filter(Cart.user_id==user_id).delete()
+    cart_db=db.query(Cart).filter(Cart.user_id==user_id.id).delete()
     db.commit()
     return {"Message":"Cart sucessfully deleted"}
