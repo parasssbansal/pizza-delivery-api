@@ -5,7 +5,7 @@ from database import Base, engine
 from models import users, address, cart, orders, order_items
 
 # import routers
-from routers import auth, cart, orders, pizzas, users
+from routers import auth, cart, orders, pizzas, users,address
 
 app = FastAPI()
 
@@ -18,3 +18,4 @@ app.include_router(users.router)
 app.include_router(pizzas.router)
 app.include_router(cart.router)
 app.include_router(orders.router)
+app.include_router(address.router)
